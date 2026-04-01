@@ -1,0 +1,225 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechHub - Comparador de Software</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* Estilo para as Estrelas de Avaliação (TechHub) */
+        .rating-input {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .rating-input input {
+            display: none;
+        }
+
+        .rating-input label {
+            cursor: pointer;
+            font-size: 30px;
+            color: #ddd;
+            transition: color 0.2s;
+        }
+
+        .rating-input input:checked~label,
+        .rating-input label:hover,
+        .rating-input label:hover~label {
+            color: #f1c40f;
+        }
+
+        .no-rating {
+            color: #999;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        .brand-name {
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .brand-name span {
+            color: var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <a href="/" class="brand-name">Tech<span>Hub</span></a>
+        <h2>Filtros</h2>
+        <form method="GET">
+            <label>Pesquisa Livre</label>
+            <input type="text" name="nome" placeholder="Ex: Dell G15, Macbook..." value="{{ filtros.nome }}">
+
+            <label>Faixa de Preço (R$)</label>
+            <div class="price-group">
+                <input type="number" name="p_min" placeholder="Mín" value="{{ filtros.p_min }}">
+                <input type="number" name="p_max" placeholder="Máx" value="{{ filtros.p_max }}">
+            </div>
+
+            <label>Avaliação Mínima</label>
+            <select name="min_estrelas">
+                <option value="">Todas (incluindo novos)</option>
+                <option value="5" {% if filtros.min_estrelas == '5' %}selected{% endif %}>Apenas 5⭐</option>
+                <option value="4" {% if filtros.min_estrelas == '4' %}selected{% endif %}>4⭐</option>
+                <option value="3" {% if filtros.min_estrelas == '3' %}selected{% endif %}>3⭐</option>
+                <option value="2" {% if filtros.min_estrelas == '2' %}selected{% endif %}>2⭐</option>
+                <option value="1" {% if filtros.min_estrelas == '1' %}selected{% endif %}>1⭐</option>
+            </select>
+
+            <label>Processador (CPU)</label>
+            <select name="cpu">
+                <option value="">Todos</option>
+                <option value="i5" {% if filtros.cpu == 'i5' %}selected{% endif %}>Intel Core i5</option>
+                <option value="i7" {% if filtros.cpu == 'i7' %}selected{% endif %}>Intel Core i7</option>
+                <option value="i9" {% if filtros.cpu == 'i9' %}selected{% endif %}>Intel Core i9</option>
+                <option value="Ryzen" {% if filtros.cpu == 'Ryzen' %}selected{% endif %}>AMD Ryzen</option>
+                <option value="M2" {% if filtros.cpu == 'M2' %}selected{% endif %}>Apple M-Series</option>
+            </select>
+
+            <label>Placa de Vídeo (GPU)</label>
+            <select name="gpu">
+                <option value="">Todas</option>
+                <option value="RTX" {% if filtros.gpu == 'RTX' %}selected{% endif %}>NVIDIA RTX</option>
+                <option value="GTX" {% if filtros.gpu == 'GTX' %}selected{% endif %}>NVIDIA GTX</option>
+                <option value="Integrated" {% if filtros.gpu == 'Integrated' %}selected{% endif %}>Integrada</option>
+            </select>
+
+            <label>Memória RAM</label>
+            <select name="ram">
+                <option value="">Todas</option>
+                <option value="8GB" {% if filtros.ram == '8GB' %}selected{% endif %}>8GB</option>
+                <option value="16GB" {% if filtros.ram == '16GB' %}selected{% endif %}>16GB</option>
+                <option value="32GB" {% if filtros.ram == '32GB' %}selected{% endif %}>32GB</option>
+            </select>
+
+            <label>Armazenamento (SSD)</label>
+            <select name="ssd">
+                <option value="">Todos</option>
+                <option value="256GB" {% if filtros.ssd == '256GB' %}selected{% endif %}>256GB SSD</option>
+                <option value="512GB" {% if filtros.ssd == '512GB' %}selected{% endif %}>512GB SSD</option>
+                <option value="1TB" {% if filtros.ssd == '1TB' %}selected{% endif %}>1TB SSD</option>
+            </select>
+
+            <button type="submit" class="btn-filter">FILTRAR TECHHUB</button>
+            <a href="/"
+                style="display:block; text-align:center; margin-top:10px; color:#666; text-decoration:none; font-size:0.8rem;">Limpar
+                Tudo</a>
+        </form>
+    </aside>
+
+    <div class="container">
+        <main class="main">
+            <div class="top-bar">
+                <span>Resultados TechHub: <strong>{{ total_encontrados }}</strong> itens</span>
+            </div>
+
+            <div class="grid">
+                {% for p in produtos %}
+                <div class="card"
+                    onclick="openDetails('{{ p.id }}', '{{ p.nome }}', '{{ p.foto }}', '{{ p.media_estrelas|default:'null' }}', '{{ p.cpu }}', '{{ p.gpu }}', '{{ p.ram }}', '{{ p.ssd }}', '{{ p.specs.Descricao }}')">
+                    <img src="{{ p.foto }}" onerror="this.src='{% static 'img/image.png' %}'; this.onerror=null;">
+                    <div class="info">
+                        <div class="name">{{ p.nome }}</div>
+                        <div class="stars">
+                            {% if p.media_estrelas %}
+                            ⭐ {{ p.media_estrelas }}
+                            {% else %}
+                            <span class="no-rating">Sem avaliações</span>
+                            {% endif %}
+                        </div>
+                        <div class="price">R$ {{ p.preco }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+
+        <aside id="details-sidebar" class="details-sidebar">
+            <span class="close-btn" onclick="closeDetails()">&times;</span>
+
+            <div id="side-content">
+                <img id="side-img" style="width:100%; height:250px; object-fit:contain; margin-bottom: 20px;">
+                <h2 id="side-title" style="margin-bottom: 10px;"></h2>
+                <div id="side-rating" style="font-size: 1.2rem; color: #f1c40f; margin-bottom: 15px;"></div>
+
+                <div class="specs-badges" id="side-specs" style="margin-bottom: 20px;"></div>
+
+                <p id="side-desc" style="line-height: 1.5; color: #666; margin-bottom: 20px;"></p>
+
+                <hr>
+
+                <div class="comments-section">
+                    <h3>Avaliações da Comunidade</h3>
+                    <div id="side-comments-list"></div>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="notebook_id" id="side-notebook-id">
+
+                        <label>Sua nota técnica:</label>
+                        <div class="rating-input">
+                            <input type="radio" name="estrelas" value="5" id="s5" required><label for="s5">★</label>
+                            <input type="radio" name="estrelas" value="4" id="s4"><label for="s4">★</label>
+                            <input type="radio" name="estrelas" value="3" id="s3"><label for="s3">★</label>
+                            <input type="radio" name="estrelas" value="2" id="s2"><label for="s2">★</label>
+                            <input type="radio" name="estrelas" value="1" id="s1"><label for="s1">★</label>
+                        </div>
+
+                        <textarea name="comentario" placeholder="Conte-nos sua experiência técnica..."
+                            required></textarea>
+
+                        <button type="submit" class="btn-comment">Publicar no TechHub</button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        function openDetails(id, nome, foto, media, cpu, gpu, ram, ssd, desc) {
+            const sidebar = document.getElementById('details-sidebar');
+            sidebar.classList.add('active');
+
+            document.getElementById('side-title').innerText = nome;
+            document.getElementById('side-img').src = foto;
+            document.getElementById('side-notebook-id').value = id;
+            document.getElementById('side-desc').innerText = desc;
+
+            const ratingDisplay = document.getElementById('side-rating');
+            if (media !== 'null' && media !== '') {
+                ratingDisplay.innerHTML = "Média: " + media + " ⭐";
+            } else {
+                ratingDisplay.innerHTML = "<span class='no-rating'>Sem avaliações ainda</span>";
+            }
+
+            const specsContainer = document.getElementById('side-specs');
+            specsContainer.innerHTML = `
+                <span class="badge">${cpu}</span>
+                <span class="badge">${gpu}</span>
+                <span class="badge">${ram}</span>
+                <span class="badge">${ssd}</span>
+            `;
+        }
+
+        function closeDetails() {
+            document.getElementById('details-sidebar').classList.remove('active');
+        }
+    </script>
+
+</body>
+
+</html>

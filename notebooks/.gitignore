@@ -1,0 +1,34 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambientes Virtuais (Pasta que contém as bibliotecas instaladas)
+venv/
+env/
+ENV/
+.env
+.venv
+
+# Banco de Dados Local (Importante: não subir seu banco de testes)
+*.sqlite3
+
+# Pasta de arquivos estáticos coletados (gerada pelo collectstatic)
+staticfiles/
+static_root/
+
+# Pasta de uploads de usuários (se houver)
+media/
+
+# Configurações de IDEs (VS Code, PyCharm, etc)
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

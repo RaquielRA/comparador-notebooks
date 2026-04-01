@@ -1,0 +1,205 @@
+:root {
+    --primary: #2c3e50;
+    --accent: #3498db;
+    --success: #27ae60;
+    --bg: #f8f9fa;
+    --text: #333;
+    --white: #ffffff;
+    --border: #e0e0e0;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    display: flex;
+    background-color: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden; /* O scroll será controlado internamente nas colunas */
+}
+
+/* --- Sidebar de Filtros (Esquerda) --- */
+.sidebar {
+    width: 320px;
+    background: var(--white);
+    height: 100vh;
+    padding: 25px;
+    border-right: 1px solid var(--border);
+    box-sizing: border-box;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.sidebar h2 {
+    color: var(--primary);
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 10px;
+}
+
+.sidebar label {
+    display: block;
+    font-weight: 600;
+    margin-top: 15px;
+    font-size: 0.85rem;
+}
+
+.sidebar input, .sidebar select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.btn-filter {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+.btn-filter:hover { background: #2980b9; }
+
+/* --- Container Principal (Centro + Direita) --- */
+.container {
+    display: flex;
+    flex: 1;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --- Grid de Notebooks (Centro) --- */
+.main {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+    background: var(--bg);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+/* --- Cards --- */
+.card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid var(--border);
+    transition: 0.3s;
+    cursor: pointer;
+    text-align: center;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
+
+.card img {
+    width: 100%;
+    height: 150px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.name { font-weight: bold; height: 40px; overflow: hidden; margin-bottom: 5px; }
+.stars { color: #f1c40f; margin-bottom: 5px; }
+.price { font-size: 1.3rem; color: var(--success); font-weight: bold; }
+
+/* --- Painel de Detalhes Estilo Google (Direita) --- */
+.details-sidebar {
+    width: 0; /* Começa fechado */
+    background: var(--white);
+    border-left: 1px solid var(--border);
+    height: 100vh;
+    overflow-y: auto;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.details-sidebar.active {
+    width: 500px; /* Largura quando aberto */
+}
+
+#side-content {
+    padding: 30px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.details-sidebar.active #side-content {
+    opacity: 1;
+}
+
+.close-btn {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #999;
+    z-index: 10;
+}
+
+.close-btn:hover { color: #333; }
+
+/* --- Badges no Painel --- */
+.specs-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.badge {
+    background: #f0f2f5;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid #ddd;
+}
+
+/* --- Comentários --- */
+textarea {
+    width: 100%;
+    height: 80px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px 0;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.btn-comment {
+    width: 100%;
+    padding: 10px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* --- Responsividade --- */
+@media (max-width: 1200px) {
+    .details-sidebar.active { width: 400px; }
+}
+
+@media (max-width: 900px) {
+    body { flex-direction: column; overflow-y: auto; }
+    .sidebar, .container { width: 100%; height: auto; }
+    .details-sidebar.active { width: 100%; position: fixed; bottom: 0; height: 80vh; z-index: 100; }
+}
