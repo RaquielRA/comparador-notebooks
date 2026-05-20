@@ -12,15 +12,16 @@ async def lista_notebooks(request):
 
     # 1. Captura de Parâmetros da URL
     filtros = {
-        'nome': request.GET.get('nome', '').strip(),
-        'p_min': request.GET.get('p_min', '0'),
-        'p_max': request.GET.get('p_max', '20000'),
-        'ram': request.GET.get('ram', ''),
-        'ssd': request.GET.get('ssd', ''),
-        'cpu': request.GET.get('cpu', ''),
-        'gpu': request.GET.get('gpu', ''),
-        'min_estrelas': request.GET.get('min_estrelas', ''), # Novo filtro TechHub
-    }
+    'nome': request.GET.get('nome', '').strip(),
+    'p_min': request.GET.get('p_min', '0'),
+    'p_max': request.GET.get('p_max', '20000'),
+    'ram': request.GET.get('ram', ''),
+    'ssd': request.GET.get('ssd', ''),
+    'cpu': request.GET.get('cpu', ''),
+    'gpu': request.GET.get('gpu', ''),
+    'min_estrelas': request.GET.get('min_estrelas', ''),
+    'perfil': request.GET.get('perfil', ''),  # NOVO FILTRO
+}
 
     if request.method == "POST":
         notebook_id = request.POST.get('notebook_id')
@@ -55,6 +56,31 @@ async def lista_notebooks(request):
 
         # 4. Cruzamento com Banco de Dados e Lógica de Estrelas
         for p in produtos_brutos:
+
+            perfil = filtros['perfil']
+
+            # PERFIL ESTUDOS
+            if perfil == 'estudo':
+                if (
+                    ('4GB' in p['ram']) or
+                    ('128GB' in p['ssd'])
+                ):
+                    continue
+
+            # PERFIL TRABALHO
+            if perfil == 'trabalho':
+                if (
+                    ('16GB' not in p['ram'] and '32GB' not in p['ram']) or
+                    ('512GB' not in p['ssd'] and '1TB' not in p['ssd'])
+                ):
+                    continue
+
+            # PERFIL JOGOS
+            if perfil == 'jogos':
+                if (
+                    ('RTX' not in p['gpu'] and 'GTX' not in p['gpu'])
+                ):
+                    continue
             
             # Função síncrona para agregar dados do SQLite
             def obter_dados_avaliacao(nid):

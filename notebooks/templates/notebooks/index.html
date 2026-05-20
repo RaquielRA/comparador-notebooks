@@ -52,6 +52,40 @@
         .brand-name span {
             color: var(--accent);
         }
+
+        .perfil-navbar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .perfil-btn {
+            padding: 14px 22px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 700;
+            background: #ffffff;
+            color: #333;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: 0.25s;
+            border: 2px solid transparent;
+        }
+
+        .perfil-btn:hover {
+            transform: translateY(-3px);
+            border-color: #6c63ff;
+        }
+
+        .perfil-btn.active {
+            background: #6c63ff;
+            color: white;
+        }
+
+        .perfil-btn.limpar {
+            background: #ffeded;
+            color: #cc4444;
+        }
     </style>
 </head>
 
@@ -123,6 +157,27 @@
 
     <div class="container">
         <main class="main">
+
+            <div class="perfil-navbar">
+
+                <a href="?perfil=estudo" class="perfil-btn {% if filtros.perfil  == 'estudo' %}active{% endif %}">
+                    📚 Para Estudos
+                </a>
+
+                <a href="?perfil=trabalho" class="perfil-btn {% if filtros.perfil  == 'trabalho' %}active{% endif %}">
+                    💼 Para Trabalho
+                </a>
+
+                <a href="?perfil=jogos" class="perfil-btn {% if filtros.perfil  == 'jogos' %}active{% endif %}">
+                    🎮 Para Jogos
+                </a>
+
+                <a href="/" class="perfil-btn limpar">
+                    ✖ Limpar
+                </a>
+
+            </div>
+
             <div class="top-bar">
                 <span>Resultados TechHub: <strong>{{ total_encontrados }}</strong> itens</span>
             </div>
